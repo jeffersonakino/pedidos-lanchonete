@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f4ef" />
+    <meta name="description" content="Painel para organizar pedidos e acompanhar cada etapa do preparo." />
+    <title>Pedidos | Sabor da Casa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M7 18.5h18l-1.6 7H8.6L7 18.5Z" fill="currentColor" />
+              <path d="M8 15.5c0-2 1.5-3.5 3.5-3.5h9c2 0 3.5 1.5 3.5 3.5v1H8v-1Z" fill="currentColor" opacity=".72" />
+              <path d="M11 9c0-1.2.8-1.7.8-2.8M16 9c0-1.2.8-1.7.8-2.8M21 9c0-1.2.8-1.7.8-2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div>
+            <p class="eyebrow">SABOR DA CASA <span class="brand-divider">/</span> GESTÃO</p>
+            <h1>Pedidos</h1>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <div class="store-status"><span class="status-dot"></span> Atendimento ativo</div>
+          <time id="todayLabel" class="today-label"></time>
+          <button id="clearOrders" class="ghost-button" type="button">Limpar pedidos</button>
+        </div>
+      </header>
+
+      <p id="appMessage" class="app-message" role="alert" aria-live="assertive"></p>
+
+      <section class="summary-grid" aria-label="Resumo dos pedidos">
+        <article class="summary-card accent-orange">
+          <div class="summary-topline"><span>Total de pedidos</span><span class="summary-icon" aria-hidden="true">#</span></div>
+          <strong id="totalOrders">0</strong>
+          <small>Pedidos registrados</small>
+        </article>
+        <article class="summary-card accent-yellow">
+          <div class="summary-topline"><span>Recebidos</span><span class="summary-icon" aria-hidden="true">↓</span></div>
+          <strong id="receivedCount">0</strong>
+          <small>Aguardando preparo</small>
+        </article>
+        <article class="summary-card accent-blue">
+          <div class="summary-topline"><span>Em preparo</span><span class="summary-icon" aria-hidden="true">◷</span></div>
+          <strong id="preparingCount">0</strong>
+          <small>Na cozinha agora</small>
+        </article>
+        <article class="summary-card accent-green">
+          <div class="summary-topline"><span>Prontos</span><span class="summary-icon" aria-hidden="true">✓</span></div>
+          <strong id="readyCount">0</strong>
+          <small>Aguardando retirada</small>
+        </article>
+      </section>
+
+      <main class="content-grid">
+        <section class="panel">
+          <div class="panel-header panel-heading">
+            <div>
+              <p class="section-kicker">CADASTRO RÁPIDO</p>
+              <h2>Novo pedido</h2>
+              <p class="panel-description">Registre os detalhes para a equipe preparar.</p>
+            </div>
+            <span class="heading-mark" aria-hidden="true">+</span>
+          </div>
+
+          <form id="orderForm" class="order-form">
+            <div class="field-row two-columns">
+              <label>
+                <span>Nome do cliente</span>
+                <input id="customerName" name="customerName" type="text" placeholder="Ex: Ana Souza" required />
+              </label>
+              <label>
+                <span>Telefone</span>
+                <input id="customerPhone" name="customerPhone" type="tel" placeholder="(11) 99999-0000" />
+              </label>
+            </div>
+
+            <label>
+              <span>Itens do pedido</span>
+              <textarea id="orderItems" name="orderItems" rows="4" placeholder="Ex: 2 X-Burger, 1 Coca-Cola, 1 Batata" required></textarea>
+            </label>
+
+            <div class="field-row two-columns">
+              <label>
+                <span>Status inicial</span>
+                <select id="status" name="status">
+                  <option value="recebido">Recebido</option>
+                  <option value="em-preparo">Em preparo</option>
+                  <option value="pronto">Pronto</option>
+                </select>
+              </label>
+              <label>
+                <span>Valor aproximado</span>
+                <input id="orderValue" name="orderValue" type="text" inputmode="decimal" placeholder="R$ 0,00" />
+              </label>
+            </div>
+
+            <label>
+              <span>Observações</span>
+              <textarea id="orderNotes" name="orderNotes" rows="3" placeholder="Sem cebola, bem quente, entregar no balcão..."></textarea>
+            </label>
+
+            <button class="primary-button" type="submit">Adicionar pedido</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header with-filter panel-heading">
+            <div>
+              <p class="section-kicker">ACOMPANHAMENTO</p>
+              <h2>Pedidos recentes</h2>
+              <p class="panel-description">Acompanhe cada pedido até a retirada.</p>
+            </div>
+            <span id="orderCount" class="order-count"></span>
+          </div>
+          <div class="list-toolbar">
+            <div class="filters">
+              <label>
+                <span class="sr-only">Buscar cliente</span>
+                <input id="searchInput" type="search" placeholder="Buscar cliente..." />
+              </label>
+              <select id="statusFilter">
+                <option value="todos">Todos</option>
+                <option value="recebido">Recebido</option>
+                <option value="em-preparo">Em preparo</option>
+                <option value="pronto">Pronto</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="ordersList" class="orders-list" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <template id="orderCardTemplate">
+      <article class="order-card">
+        <div class="card-header">
+          <div>
+            <p class="label">Cliente</p>
+            <h3 class="customer-name"></h3>
+          </div>
+          <span class="status-badge"></span>
+        </div>
+
+        <div class="card-meta">
+          <span class="phone"></span>
+          <span class="value"></span>
+        </div>
+
+        <div class="items-block">
+          <p class="label">Itens</p>
+          <ul class="items-list"></ul>
+        </div>
+
+        <div class="notes-block">
+          <p class="label">Observações</p>
+          <p class="notes-text"></p>
+        </div>
+
+        <div class="card-actions">
+          <button class="secondary-button advance-button" type="button">Avançar status</button>
+          <button class="danger-button delete-button" type="button">Excluir</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
